@@ -9,9 +9,9 @@ class Point {
 let iterator = 0;
 
 
-let anglespeed1 = 34; 
-let anglespeed2 = 76;
-let anglespeed3 = 1;
+let anglespeed1 = 1; 
+let anglespeed2 = 1;
+let anglespeed3 = 0;
 
 let drawing_time = 360
 let rotating_time = 405
@@ -21,15 +21,17 @@ let recording_time = 450
 
 let points = []
 let back_color = "#0d0d0d";
-let line_color = "#b05279";
+let line_color = "#e87d3e";
 let point_color = "#ffffff";
 var canvas = document.createElement("canvas")
 document.body.style.margin = 0
 document.body.style.padding = 0
 document.body.appendChild(canvas)
 
-canvas.width = document.documentElement.clientWidth;
-canvas.height = document.documentElement.clientHeight;
+// canvas.width = document.documentElement.clientWidth;  // Double the width
+canvas.width = 1080;  // Double the width
+
+canvas.height = 1920; // Double the height
 var context = canvas.getContext("2d")
 
 
@@ -40,8 +42,8 @@ context.fillRect(0, 0, canvas.width, canvas.height)
 
 
 let center = new Point(canvas.width/2, canvas.height/2);
-let alpha = new Point(center.X, center.Y-150);
-let beta = new Point(center.X, center.Y-300);
+let alpha = new Point(center.X, center.Y-220);
+let beta = new Point(center.X, center.Y-440);
 
 
 let angle1 = anglespeed1 * Math.PI / 180;
@@ -53,9 +55,11 @@ let mediaRecorder;
 let recordedChunks = [];
 
 function startRecording() {
-    let stream = canvas.captureStream(30);
+    let stream = canvas.captureStream(60);
     mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'video/webm; codecs=vp9'
+        mimeType: 'video/webm; codecs=vp9',
+        videoBitsPerSecond: 10000000  // Set video bitrate to 5Mbps
+
     });
 
     mediaRecorder.ondataavailable = function (event) {
@@ -71,7 +75,7 @@ function startRecording() {
         let url = URL.createObjectURL(blob);
         let a = document.createElement('a');
         a.href = url;
-        a.download = 'canvas_recording.mp4';
+        a.download = `spiro_${anglespeed1}_${anglespeed2}_${anglespeed3}.mp4`;
         document.body.appendChild(a);
         a.click();
         setTimeout(() => {
@@ -137,7 +141,7 @@ canvas.addEventListener('click', function() {
             }
 
             context.strokeStyle = point_color;
-            context.lineWidth = 1.5;
+            context.lineWidth = 2;
             for (let i = 0; i < points.length - 1; i++) {
                 let point1 = points[i];
                 let point2 = points[i + 1];
@@ -175,7 +179,7 @@ canvas.addEventListener('click', function() {
             context.strokeStyle = line_color;
             context.beginPath();
             context.moveTo(center.X, center.Y);
-            context.arc(center.X, center.Y, 4, 0, 2 * Math.PI);
+            context.arc(center.X, center.Y, 2, 0, 2 * Math.PI);
             context.stroke();
             context.fillStyle = back_color;
             context.fill();
@@ -199,7 +203,7 @@ canvas.addEventListener('click', function() {
         setTimeout(() => {
             window.requestAnimationFrame(animate);
             context.fillStyle = back_color;
-        }, 20);
+        }, 25);
     }
     animate();
 });
