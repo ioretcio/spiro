@@ -9,12 +9,12 @@ class Point {
 let iterator = 0;
 
 
-let anglespeed1 = 1; 
-let anglespeed2 = 1;
-let anglespeed3 = 0;
+let anglespeed1 = 45; 
+let anglespeed2 = 182;
+let anglespeed3 = 1;
 
 let drawing_time = 360
-let rotating_time = 405
+let rotating_time = 406
 let recording_time = 450
 
 
@@ -58,7 +58,7 @@ function startRecording() {
     let stream = canvas.captureStream(60);
     mediaRecorder = new MediaRecorder(stream, {
         mimeType: 'video/webm; codecs=vp9',
-        videoBitsPerSecond: 10000000  // Set video bitrate to 5Mbps
+        videoBitsPerSecond: 10000000
 
     });
 
@@ -117,7 +117,7 @@ canvas.addEventListener('click', function() {
         
         if (iterator <= recording_time) {
 
-            rotatePoints();
+            
         
             if(iterator<=drawing_time)
             {
@@ -129,16 +129,8 @@ canvas.addEventListener('click', function() {
             // }
             context.clearRect(0, 0, canvas.width, canvas.height);
             context.fillRect(0, 0, canvas.width, canvas.height);
-            
-            if(iterator<rotating_time-1)
-            {
-                points.forEach(point => {
-                    let newX = Math.cos(angle3) * (point.X - center.X) - Math.sin(angle3) * (point.Y - center.Y) + center.X;
-                    let newY = Math.sin(angle3) * (point.X - center.X) + Math.cos(angle3) * (point.Y - center.Y) + center.Y;
-                    point.X = newX;
-                    point.Y = newY;
-                });
-            }
+           
+
 
             context.strokeStyle = point_color;
             context.lineWidth = 2;
@@ -174,7 +166,7 @@ canvas.addEventListener('click', function() {
                 context.stroke();
                 context.fill();
             }
-
+            
             context.lineWidth = 4;
             context.strokeStyle = line_color;
             context.beginPath();
@@ -190,8 +182,16 @@ canvas.addEventListener('click', function() {
                 stopRecording();
             }
            
-
-
+            if(iterator<rotating_time-1)
+            {
+                points.forEach(point => {
+                    let newX = Math.cos(angle3) * (point.X - center.X) - Math.sin(angle3) * (point.Y - center.Y) + center.X;
+                    let newY = Math.sin(angle3) * (point.X - center.X) + Math.cos(angle3) * (point.Y - center.Y) + center.Y;
+                    point.X = newX;
+                    point.Y = newY;
+                });
+            }
+            rotatePoints();
             console.log("Speed1: " + anglespeed1);
             console.log("Speed2: " + anglespeed2);
             console.log("Rotate: " + anglespeed3);
